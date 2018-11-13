@@ -1,0 +1,552 @@
+@import url(https://fonts.googleapis.com/css?family=Quicksand:300,400,700);
+html {
+  min-height: 100%;
+}
+
+hr {
+  border: 0;
+  height: 1px;
+  opacity: .5;
+  background-image: linear-gradient(to right, rgba(255, 255, 255, 0.2), white, rgba(255, 255, 255, 0.2));
+}
+
+body {
+  font-family: 'quicksand';
+  font-weight: 300;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: white;
+  letter-spacing: .5px;
+  min-height: 100%;
+  background: linear-gradient(to bottom, #474c4f 0%, #1f2c34 100%);
+  background-repeat: no-repeat;
+}
+
+.hide {
+  display: none;
+}
+
+::-webkit-scrollbar {
+  display: none;
+}
+
+textarea {
+  resize: none;
+}
+
+.app-wrapper {
+  width: 375px;
+  height: 667px;
+  position: relative;
+  overflow: hidden;
+  border-radius: 3px;
+  box-shadow: 10px 10px 10px -8px rgba(0, 0, 0, 0.35);
+  margin-top: 5%;
+  -webkit-transform: scale(0.9);
+          transform: scale(0.9);
+}
+
+.link {
+  opacity: .7;
+}
+
+.active-link {
+  opacity: 1;
+}
+
+.menu {
+  position: absolute;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  width: 100%;
+  height: 60px;
+  z-index: 10000;
+}
+.menu ul {
+  display: inline-flex;
+}
+.menu ul i {
+  font-size: 20px;
+  margin-left: 28px;
+  margin-right: 28px;
+  color: white;
+}
+.menu ul button {
+  -webkit-transform: scale(1.6);
+          transform: scale(1.6);
+  background: 0 none;
+  border-radius: 50%;
+  border: 1px solid white;
+  width: 25px;
+  height: 25px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 15px;
+  margin-left: 15px;
+  cursor: pointer;
+}
+.menu ul button:focus {
+  outline: 0 none;
+}
+.menu ul button i {
+  -webkit-transform: scale(0.6);
+          transform: scale(0.6);
+}
+
+.contact-search-wrapper {
+  opacity: 1;
+  height: 60px;
+}
+
+.contact-search {
+  box-sizing: border-box;
+  width: 375px;
+  padding-top: 20px;
+  padding-left: 20px;
+  padding-right: 60px;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  border-width: 0px;
+  color: white;
+  font-size: 20px;
+}
+.contact-search:focus {
+  outline: 0px;
+}
+
+.search-icon {
+  position: absolute;
+  right: 0;
+  margin-right: 20px;
+  margin-top: 20px;
+  color: white;
+  font-size: 25px;
+}
+
+.flat {
+  box-shadow: none !important;
+}
+
+.contact-thumbnail {
+  height: 40px;
+  width: 40px;
+  border-radius: 50%;
+  background-color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: auto;
+  font-weight: 700;
+  box-shadow: 10px 10px 20px -12px rgba(0, 0, 0, 0.7);
+  transition: all 300ms cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.chatting {
+  position: absolute;
+  color: white;
+  left: 15px;
+  margin-top: -45px;
+  font-size: 50px;
+}
+
+.active-thumb {
+  -webkit-transform: scale(1.05);
+          transform: scale(1.05);
+}
+
+.not-active-thumb {
+  -webkit-transform: scale(0.9);
+          transform: scale(0.9);
+  opacity: .7;
+  box-shadow: none !important;
+}
+
+.contact-list {
+  display: flex-column;
+  position: absolute;
+  margin-bottom: 60px;
+  height: 544px;
+  width: 100%;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+.contact-list li {
+  margin-bottom: 4px;
+  width: 100%;
+  padding: 10px;
+  padding-left: 20px;
+  background-color: rgba(255, 255, 255, 0.3);
+}
+.contact-list .contact-name {
+  font-weight: 400;
+  position: absolute;
+  right: 0;
+  margin-top: -30px;
+  color: white;
+  background: 0 none;
+  border: 0 none;
+  font-size: 15px;
+  letter-spacing: 1px;
+  margin-right: 10px;
+  cursor: pointer;
+}
+.contact-list .contact-name:focus {
+  outline: none;
+}
+.contact-list .contact-name i {
+  margin-left: 10px;
+}
+
+.user-chats {
+  width: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  height: 60px;
+  position: absolute;
+  display: flex;
+  align-items: center;
+  padding-left: 10px;
+  padding-right: 10px;
+}
+.user-chats ul {
+  display: flex;
+}
+.user-chats ul li {
+  margin: 5px;
+  cursor: pointer;
+}
+
+.active-chat {
+  position: absolute;
+  width: 100%;
+  display: flex;
+  margin-top: 60px;
+  overflow: auto;
+  height: 76%;
+}
+.active-chat .active-name {
+  position: absolute;
+  width: 100%;
+  text-align: center;
+  color: white;
+  margin-top: 20px;
+  font-weight: 700;
+  font-size: 20px;
+}
+.active-chat ul {
+  margin-top: 30px;
+}
+.active-chat ul div {
+  margin: 10px;
+}
+.active-chat ul li {
+  font-weight: 400;
+  display: inline-block;
+  background-color: white;
+  padding: 10px;
+  border-radius: 3px;
+  text-align: left;
+  max-width: 200px;
+  word-wrap: break-word;
+  margin-top: 20px;
+  box-shadow: 10px 10px 20px -12px rgba(0, 0, 0, 0.7);
+}
+.active-chat ul .group {
+  margin-top: -8px;
+}
+.active-chat .contact-message {
+  margin-left: 0px;
+}
+.active-chat .contact-message li {
+  margin-left: -5px;
+}
+.active-chat .user-message {
+  display: flex;
+  width: 355px;
+}
+.active-chat .user-message li {
+  background-color: rgba(0, 0, 0, 0.7);
+  color: white;
+  margin-left: auto;
+  box-shadow: 10px 10px 20px -12px rgba(0, 0, 0, 0.7), inset 10px 10px 20px -12px rgba(255, 255, 255, 0.3);
+}
+.active-chat .user-message .thread-thumbnail {
+  display: none;
+}
+
+.thread-thumbnail {
+  display: inline-block;
+  background-color: white;
+  height: 20px;
+  width: 20px;
+  border-radius: 50%;
+  text-align: center;
+  line-height: 1.6;
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.message-input {
+  box-sizing: border-box;
+  position: absolute;
+  bottom: 0;
+  margin-bottom: 60px;
+  width: 375px;
+  height: 40px;
+  border: 0 none;
+  padding: 10px;
+  padding-right: 50px;
+  word-wrap: break-word;
+  background-color: rgba(255, 255, 255, 0.8);
+  font-size: 16px;
+  color: black;
+  font-weight: 300;
+}
+.message-input:focus {
+  outline: 0px;
+  background-color: white;
+}
+
+.send-button {
+  height: 30px;
+  width: 30px;
+  position: absolute;
+  z-index: 2000;
+  bottom: 65px;
+  right: 5px;
+  font-size: 20px;
+  text-align: center;
+  border-radius: 50%;
+  border: 0 none;
+  color: rgba(0, 0, 0, 0.4);
+  background: 0 none;
+  cursor: pointer;
+}
+.send-button:focus {
+  outline: 0px;
+}
+
+.settings {
+  height: 568px;
+  background: white;
+  padding: 20px;
+  display: flex-column;
+  text-align: center;
+}
+.settings .settings-header {
+  font-weight: bold;
+  font-size: 20px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.2);
+}
+.settings .themes-header {
+  font-size: 16px;
+  padding-top: 20px;
+}
+
+.theme-button {
+  height: 60px;
+  width: 60px;
+  border-radius: 50%;
+  border: 0px;
+  margin: 5px;
+  margin-top: 20px;
+  box-shadow: 10px 10px 20px -12px rgba(0, 0, 0, 0.7), inset 10px 10px 20px -12px white;
+  cursor: pointer;
+  transition: all .2s ease;
+}
+.theme-button:focus {
+  outline: none;
+}
+.theme-button:hover {
+  -webkit-transform: scale(0.9);
+          transform: scale(0.9);
+}
+
+.red {
+  background: linear-gradient(to right, #ff4f38 0%, #bd3526 100%);
+}
+
+.orange {
+  background: linear-gradient(to right, #fc7231 0%, #cc4d12 100%);
+}
+
+.yellow {
+  background: linear-gradient(to right, #ffd416 0%, #cfa913 100%);
+}
+.black{
+  background: linear-gradient(to right, #000416 0%, #000913 100%);
+}
+
+.green {
+  background: linear-gradient(to right, #55b242 0%, #418a33 100%);
+}
+
+.blue {
+  background: linear-gradient(to right, #aed5e4 0%, #334d7e 100%);
+}
+
+.purple {
+  background: linear-gradient(to right, #fb8bb2 0%, #a65d78 100%);
+}
+
+.contact-card {
+  margin-top: -20px;
+  padding-top: 20px;
+  height: 220px;
+  background: rgba(0, 0, 0, 0.5);
+  box-shadow: 10px 10px 20px -10px rgba(0, 0, 0, 0.5);
+}
+.contact-card .profile-pic {
+  position: static;
+  height: 150px;
+  width: 150px;
+  overflow: hidden;
+  border-radius: 50%;
+  margin: 20px;
+  box-shadow: 10px 10px 20px -10px rgba(0, 0, 0, 0.5);
+}
+.contact-card .profile-pic img {
+  -webkit-filter: grayscale(100%) brightness(1.3);
+          filter: grayscale(100%) brightness(1.3);
+          width:100%;
+}
+.contact-card .card-buttons {
+  position: absolute;
+  right: 0px;
+  top: 20px;
+  width: 170px;
+  display: flex-row;
+}
+.contact-card .card-buttons button {
+  margin-left: 15px;
+  cursor: pointer;
+  color: rgba(0, 0, 0, 0.7);
+  font-size: 16px;
+  height: 35px;
+  width: 35px;
+  border: none;
+  background-color: white;
+  border-radius: 50%;
+  opacity: .9;
+  box-shadow: 10px 10px 10px -8px rgba(0, 0, 0, 0.35);
+}
+.contact-card .card-buttons button:focus {
+  outline: none;
+}
+.contact-card .online-status {
+  position: absolute;
+  right: 20px;
+  top: 180px;
+  color: white;
+  font-size: 16px;
+}
+.contact-card .online-status i {
+  margin-right: 6px;
+  -webkit-animation: flicker .1s infinite;
+          animation: flicker .1s infinite;
+}
+.contact-card .name-location {
+  position: absolute;
+  right: 20px;
+  top: 90px;
+  color: white;
+  text-align: right;
+}
+.contact-card h1 {
+  font-weight: 800;
+  font-size: 25px;
+  margin-bottom: 5px;
+}
+
+.status-feed {
+  height: 390px;
+  width: 100%;
+  color: white;
+  font-size: 18px;
+  text-align: center;
+  overflow: auto;
+}
+.status-feed h1 {
+  font-size: 30px;
+  font-weight: 800;
+  margin: 20px;
+}
+.status-feed hr {
+  margin-top: 20px;
+  margin-bottom: 20px;
+  width: 100%;
+}
+.status-feed li {
+  font-weight: 400;
+  margin-left: 20px;
+  margin-right: 20px;
+  border-bottom: 10px solid rgba(0, 0, 0, 0);
+}
+.status-feed li .date {
+  font-size: 10px;
+}
+
+@-webkit-keyframes flicker {
+  0% {
+    opacity: 1;
+  }
+  15% {
+    opacity: .7;
+  }
+  25% {
+    opacity: 1;
+  }
+  35% {
+    opacity: .3;
+  }
+  45% {
+    opacity: 1;
+  }
+  50% {
+    opacity: .5;
+  }
+  80% {
+    opacity: 1;
+  }
+  90% {
+    opacity: .2;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+@keyframes flicker {
+  0% {
+    opacity: 1;
+  }
+  15% {
+    opacity: .7;
+  }
+  25% {
+    opacity: 1;
+  }
+  35% {
+    opacity: .3;
+  }
+  45% {
+    opacity: 1;
+  }
+  50% {
+    opacity: .5;
+  }
+  80% {
+    opacity: 1;
+  }
+  90% {
+    opacity: .2;
+  }
+  100% {
+    opacity: 1;
+  }
+}

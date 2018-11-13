@@ -1,0 +1,743 @@
+const { Component } = React;
+const { connect, Provider } = ReactRedux;
+const { combineReducers, createStore } = Redux;
+const { Route, Router, Link, browserHistory } = ReactRouter;
+const ReactCSSTransitionGroup = React.addons.CSSTransitionGroup;
+
+
+
+
+
+
+/****************** Dummy Data *******************/
+
+
+
+
+
+
+const contacts = [
+  {userID: "2", userName: "Ross"},
+  {userID: "3", userName: "Joey"},
+  {userID: "4", userName: "Chandler"},
+  {userID: "5", userName: "Rachel"},
+  {userID: "6", userName: "Monica"},
+  {userID: "7", userName: "Phoebe"},
+  {userID: "8", userName: "Ted"},
+  {userID: "9", userName: "Marshall"},
+  {userID: "10", userName: "Robin"},
+  {userID: "11", userName: "Barney"},
+  {userID: "12", userName: "Lilly"}
+];
+
+const defaultChat1 = {
+  chatID: "13",
+  thread: [{
+    text: "yo", 
+    from: "1"
+    },{
+    text: "yo yo yo yo?", 
+    from: "1"
+    },{
+    text: "yyyyooooooooooo", 
+    from: "6"
+    },{
+    text: "yo?", 
+    from: "6"
+  }],
+  participants: "6"
+}
+
+const defaultChat2 = {
+  chatID: "14",
+  thread: [{
+    text: "dude are you ingoring me?",
+    from: "4"
+  }],
+  participants: "4"
+}
+
+const defaultUser = {
+  userID: "1",
+  activeChat: defaultChat1,
+  userChats: [defaultChat1, defaultChat2],
+  userName: "Gunther",
+  location: "New York City",
+  thumbnail: "https://img.buzzfeed.com/buzzfeed-static/static/2014-09/16/0/enhanced/webdr10/grid-cell-24140-1410840984-5.jpg",
+  contacts: contacts,
+  status: "online",
+  statusUpdates: [
+    "I get knocked down, but I get up again, you're never gonna keep me down",
+    "Headed to work, come say wassup",
+    "Damn this new Chumbawamba record is fire",
+    "Just perkin at Central Perk",
+    "Pretty sure I just saw Bruce Willis at the shop. Crazy."
+  ]
+};
+
+
+
+
+
+
+
+
+/****************** Redux Stuff *******************/
+
+
+
+
+
+
+
+
+// --------- action types --------- 
+
+const SET_ACTIVE_CHAT = "SET_ACTIVE_CHAT",
+      START_CHAT = "START_CHAT",
+      END_CHAT = "END_CHAT",
+      SUBMIT_MESSAGE = "SUBMIT_MESSAGE",
+      UPDATE_FILTER = "UPDATE_FILTER",
+      SET_THEME = "SET_THEME";
+      
+// --------- reducers --------- 
+
+// user account reducer
+const user = (user = defaultUser, action) => {
+  const {
+    activeChat, 
+    userChats, 
+    userID, 
+    contacts 
+  } = user;
+  
+  switch (action.type) {
+    case SET_ACTIVE_CHAT:
+      if (action.participants === activeChat.participants) {
+        return user;
+      } else {
+        return Object.assign({}, user, {
+          activeChat: userChats.filter((c) => (
+            c.participants === action.participants
+          ))[0]
+        });
+      }
+    case SUBMIT_MESSAGE:
+      return Object.assign({}, user, {
+        userChats: userChats.map((c) => { 
+          if (c.chatID === action.chatID) {
+            return Object.assign({}, c, {
+              thread: c.thread.concat({
+                text: action.text,
+                from: userID
+              })
+            })
+          } else { return c; }
+        })
+      });
+    case START_CHAT:
+      return Object.assign({}, user, {
+        userChats: userChats.concat({
+          chatID: action.chatID,
+          thread: [],
+          participants: action.participants
+        })               
+      });
+    case END_CHAT:
+      var aP = activeChat.participants;
+      
+      // if only one chat is open, simply return empty containers
+      if (userChats.length === 1) { 
+        return Object.assign({}, user, {
+          activeChat: {},
+          userChats: []
+        });
+      }
+      // if ending current active chat, re-assign active chat then end target chat
+      if (action.participants === aP) {
+        
+        const newActive = userChats.filter((c) => (
+          c.participants !== aP
+        ))[0].participants;
+   
+        return Object.assign({}, user, { 
+          activeChat: userChats.filter((c) => (
+            c.participants === newActive
+          ))[0],
+          userChats: userChats.filter((c) => (
+            c.participants !== action.participants
+          ))
+        });
+      }
+      // end target chat
+      return Object.assign({}, user, {
+        userChats: userChats.filter((c) => (
+          c.participants !== action.participants
+        ))
+      });
+    default: 
+      return user;
+  }
+}
+
+//contacts page reducer
+const contactsPage = (
+  contactsPage = {
+    filterString: ""
+  },
+  action
+) => {
+  switch (action.type) {
+    case UPDATE_FILTER: 
+      return Object.assign({}, contactsPage, {
+        filterString: action.filterString
+      }) 
+    default:
+      return contactsPage
+  }
+}
+
+//settings reducer
+const settings = (settings={theme: "green"}, action) => {
+  switch (action.type) {
+    case SET_THEME:
+      return Object.assign({}, settings, {
+        theme: action.theme
+      });
+    default: 
+      return settings;
+  }
+}
+
+const appReducer = combineReducers({
+  user, 
+  contactsPage,
+  settings
+});
+
+// --------- store --------- 
+
+const store = createStore(appReducer);
+
+// --------- action creators --------- 
+
+const setActiveChat = (contactID) => ({
+  type: SET_ACTIVE_CHAT,
+  participants: contactID
+});
+
+const submitMessage = (text, chatID) => ({
+  type: SUBMIT_MESSAGE,
+  text: text,
+  chatID: chatID
+});
+
+const startChat = (participants) => {
+  const id = "" + new Date().getTime();
+  return {
+    type: START_CHAT,
+    participants: participants,
+    chatID: id
+  }
+};
+
+const endChat = (participants) => ({
+  type: END_CHAT,
+  participants: participants
+});
+
+const updateFilter = (filterString) => ({
+  type: UPDATE_FILTER,
+  filterString: filterString
+});
+
+const setTheme = (theme) => {
+  console.log(theme);
+  return {
+    type: SET_THEME,
+    theme: theme
+  }
+};
+
+
+
+
+/****************** presentational components *******************/
+
+
+
+
+
+
+
+// --------- contacts page --------- 
+
+const Contacts = ({
+  activeChat,
+  contacts,
+  userChats,
+  filterString, 
+  dispatch
+}) => {
+  let input;
+  
+  // all chats
+  const chatters = userChats.reduce((prev, next) => {
+    prev.push(next.participants)
+    return prev;
+  }, []);
+  
+  // check if user is chatting with contact
+  const chatting = (c) => (
+    chatters.indexOf(c.userID) !== -1
+  );
+  
+  // contact sort function
+  const compare = (a,b) => {
+    if (a.userName < b.userName) { return -1; }
+    if (a.userName > b.userName) { return  1; }
+    return 0;
+  }
+  
+  // search bar filter cb 
+  const searchFilter = (c) => {
+    if (filterString.length < 1) { return true; } 
+    return (
+      c.userName
+       .slice(0, filterString.length)
+       .toLowerCase() 
+      === filterString.toLowerCase()
+    );
+  }
+  
+  return (
+    <div className="contact-search-wrapper">
+      <span className="search-icon">
+        <i 
+          className="fa fa-search" 
+          aria-hidden="true"
+        ></i>
+      </span>
+      <textarea 
+        className="contact-search"  
+        placeholder="search..."
+        rows={10}
+        cols={30}
+        ref={node => { input = node }}
+        onKeyUp={(e) => {
+          dispatch(updateFilter(input.value))
+        }}
+      /> 
+      <ul className="contact-list">
+        {contacts
+          .filter(searchFilter)
+          .sort(compare)
+          .map((c) => (
+          <li>
+            <div className={chatting(c)
+                   ? "contact-thumbnail"
+                   : "contact-thumbnail flat"}
+            > {c.userName.slice(0,1)}
+            </div>
+            <i className={chatting(c)
+                 ? "fa fa-spinner fa-spin chatting"
+                 : "hide"} 
+               aria-hidden="true"
+            ></i>
+            <button 
+              className="contact-name"
+              onClick={
+                chatting(c) 
+                  ? () => {dispatch(endChat(c.userID))}
+                  : () => {dispatch(startChat(c.userID))}}
+            > {c.userName}
+              <i className={chatting(c)
+                   ? "hide"
+                   : "fa fa-plus"} 
+                 aria-hidden="true"
+              ></i>
+              <i className={chatting(c)
+                   ? "fa fa-minus"
+                   : "hide"} 
+                 aria-hidden="true"
+              ></i>
+            </button>
+          </li>
+        ))}
+      </ul>
+    </div>
+  )
+};
+const mapContactsStateToProps = (state) => ({
+  activeChat: state.user.activeChat,
+  contacts: state.user.contacts,
+  userChats: state.user.userChats,
+  filterString: state.contactsPage.filterString
+});
+const mapContactsDispatchToProps = () => ({
+  startChat: startChat
+})
+const connectedContacts = connect(
+  mapContactsStateToProps
+)(Contacts);
+
+
+// --------- home page --------- 
+
+const Home = ({user}) => {
+  const {
+    activeChat, 
+    userChats, 
+    userID, 
+    contacts 
+  } = user;
+
+  let input;
+  
+  // chat header name
+  let activeName = contacts.filter((c) => (
+    c.userID === activeChat.participants
+  ))[0];
+  
+  // message if no active chat
+  activeName = activeName === undefined 
+    ? "You're not chatting with anyone!" 
+    : activeName.userName;
+  
+  // chat thread
+  let thread = userChats.filter((c) => (
+    c.chatID === activeChat.chatID
+  ))[0];
+  
+  // empty thread if no active chat
+  thread = thread === undefined ? [] : thread.thread;
+  
+  // all chats
+  const chatters = userChats.reduce((prev, next) => {
+    prev.push(next.participants)
+    return prev;
+  }, []);
+  
+  return (
+    <div>
+      <div className="user-chats">
+        <ul>
+          {contacts.filter((c) => (
+           chatters.indexOf(c.userID) !== -1
+          )).map((c) => (
+            <li onClick={() => (
+              store.dispatch(setActiveChat(c.userID))
+            )}
+            > <div 
+                className={
+                  activeChat.participants === c.userID 
+                    ? "active-thumb contact-thumbnail"  
+                    : "contact-thumbnail not-active-thumb"}
+              > {c.userName.slice(0,1)}
+              </div>
+            </li>
+          ))}
+        </ul>
+      </div>
+      <div className="active-chat">
+        <div className="active-name">{activeName}</div>
+        <ul>
+          {thread.map((message, i) => (
+            <div 
+              className={message.from === userID 
+                ? "user-message" 
+                : "contact-message" }
+            >
+              <div className="thread-thumbnail">
+                <span>
+                  {contacts.filter((c) => (
+                    c.userID === message.from
+                  )).map(c => c.userName.slice(0,1))}
+                </span>
+              </div>
+              <li className={i > 0 
+                    ? thread[i - 1].from === message.from 
+                      ? "group" 
+                      : ""
+                    : "" }
+              > {message.text}
+              </li>
+            </div>
+          ))}
+        </ul>
+      </div>
+      <form
+        onSubmit={(e) => {
+          e.preventDefault()
+          if (!input.value.trim()) { return }
+          store.dispatch(submitMessage(
+            input.value, 
+            activeChat.chatID
+          ))
+          input.value = ''
+        }}
+      >
+        <textarea 
+          className="message-input"  
+          placeholder="message"
+          rows={10}
+          cols={30}
+          ref={node => { input = node }}
+        />
+        <button 
+          className="send-button"
+          type="submit"
+        > 
+          <i className="fa fa-chevron-right" 
+             aria-hidden="true"
+          ></i>
+        </button>
+      </form>
+    </div>
+  );
+};
+const mapHomeStateToProps = (state) => ({
+  user: state.user
+});
+const connectedHome = connect(
+  mapHomeStateToProps
+)(Home);
+
+
+// --------- profile page --------- 
+
+const Profile = ({user}) => (
+  <div>
+    <ContactCard 
+      thumbnail={user.thumbnail}
+      userName={user.userName}
+      location={user.location}
+      status={user.status}
+    />
+    <StatusFeed
+      statusUpdates={user.statusUpdates}
+    />
+  </div>
+);
+const mapProfileStateToProps = (state) => ({
+  user: state.user
+});
+const connectedProfile = connect(
+  mapProfileStateToProps
+)(Profile);
+
+const ContactCard = ({
+  thumbnail, 
+  userName, 
+  location, 
+  status
+}) => (
+  <div className="contact-card">
+    <div className="profile-pic">
+      <img src={thumbnail} />
+    </div>
+    <div className="name-location">
+      <h1>{userName}</h1>
+      <hr/>
+      <p>{location}</p>
+    </div>
+    <CardButtons />
+    <Status status={status} />
+  </div>
+);
+
+const Status = ({status}) => (
+  <div className="online-status">
+    <span>
+      <i className="fa fa-lightbulb-o" 
+         aria-hidden="true"
+      ></i>
+    </span>
+    <span>{status}</span>
+  </div>
+);
+
+const CardButtons = () => (
+  <div className="card-buttons">
+    <button>
+      <i className="fa fa-user-plus" 
+         aria-hidden="true"
+      ></i>
+    </button>
+    <button>
+      <i className="fa fa-comments"
+         aria-hidden="true"
+      ></i>
+    </button>
+    <button>
+      <i className="fa fa-thumbs-up"
+         aria-hidden="true"
+      ></i>
+    </button>
+  </div>
+);
+
+const StatusFeed = ({statusUpdates}) => (
+  <div className="status-feed">
+    <h1>Currently</h1>
+    <ul>
+      {statusUpdates.map((c) => (
+       <Update updateContent={c} />
+      ))}
+    </ul>
+  </div>
+);
+
+const Update = ({updateContent}) => (
+  <li>
+    <hr />
+    <p>"{updateContent}"</p>
+    <br />
+    <span className="date">{new Date().toString()}</span>
+  </li>
+);
+
+// --------- settings page --------- 
+
+const Settings = () => (
+  <div className="settings">
+    <div className="settings-header">Display Settings</div>
+    <div className="themes-header">
+      <span>Choose a theme:</span>
+    </div>
+    <div className='themes-wrapper'>
+      <ThemeButton color={"red"}    />
+      <ThemeButton color={"orange"} />
+      <ThemeButton color={"yellow"} />
+      <ThemeButton color={"green"}  />
+      <ThemeButton color={"blue"}   />
+      <ThemeButton color={"purple"} />
+    </div>
+  </div>
+);
+
+// --------- Theme Selector Button ---------
+
+const ThemeButton = ({color}) => (
+  <button 
+    className={"theme-button " + color}
+    onClick={()=>{store.dispatch(setTheme(color))}}
+  ></button>
+);
+
+// --------- menu bar --------- 
+
+const Menu = () => (
+  <div className="menu">
+    <ul className="menu-items">
+      <li>
+        <Link 
+          to="/contacts"
+          className="link"
+          activeClassName="active-link"
+        >
+          <i className="fa fa-users" 
+             aria-hidden="true"
+          ></i>
+        </Link>
+      </li>
+      <li>
+        <Link 
+          to="/chats"
+          className="link"
+          activeClassName="active-link"
+        >
+          <i className="fa fa-home" 
+             aria-hidden="true"
+          ></i>
+        </Link>
+      </li>
+      <li>
+        <button>
+          <i className="fa fa-plus" 
+             aria-hidden="true"
+          ></i>
+        </button>
+      </li>
+      <li>
+        <Link 
+          to="/profile"
+          className="link"
+          activeClassName="active-link"
+        >
+          <i className="fa fa-eye" 
+             aria-hidden="true"
+          ></i>
+        </Link>
+      </li>
+      <li>
+        <Link 
+          to="/settings"
+          className="link"
+          activeClassName="active-link"
+        >
+          <i className="fa fa-sliders" 
+             aria-hidden="true"
+          ></i>
+        </Link>
+      </li>
+    </ul>
+  </div>
+);  
+
+
+//  --------- index.js --------- 
+
+const App = React.createClass({
+  render () {
+    // set home to default route initially
+    const content = this.props.children 
+      ? this.props.children 
+      : <Home user={this.props.user}  />
+    
+    return (
+      <div className={"app-wrapper " + this.props.theme }>
+        {content}
+        <Menu />
+      </div>
+    );
+  }
+});  
+const mapAppStateToProps = (state) => ({
+  user: state.user,
+  theme: state.settings.theme
+})
+const connectedApp = connect(
+  mapAppStateToProps
+)(App);
+
+
+
+
+
+
+
+/****************** Router, Redux Provider, And Render *******************/
+
+
+
+
+
+
+const Root = () => (
+  <Provider store={store}>
+    <Router>
+      <Route path="/" component={connectedApp}>
+        <Route path="chats" component={connectedHome} />
+        <Route path="profile" component={connectedProfile} />
+        <Route path="settings" component={Settings} />
+        <Route path="contacts" component={connectedContacts} />
+      </Route>
+    </Router>
+  </Provider>
+);
+
+ReactDOM.render(
+  <Root />,
+  document.getElementById("root")
+);
