@@ -253,7 +253,7 @@ var submitMessage = function submitMessage(text, chatID) {
 
   var responseMessage = function responseMessage(text) {
    
-    var accessToken = "e7a2d5212c8a44b08a304c84778ea406";
+    var accessToken = "a80089bdbf4e468180984f342866711c";
 	  var baseUrl = "https://api.api.ai/v1/";	
     // return (dispatch, getState) => {
       
