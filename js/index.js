@@ -15,7 +15,7 @@ var _ReduxThunk = ReduxThunk;
 
 
 
-
+var sessionID = Math.random() ;
 
 var contacts = [
 { userID: "2", userName: "Academic Chat Bot" }
@@ -281,7 +281,7 @@ var submitMessage = function submitMessage(text, chatID) {
         'Accept': 'application/json',
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({ query: text, lang: "en", sessionId :Math.random() })
+      body: JSON.stringify({ query: text, lang: "en", sessionId :sessionID })
     }).then(response => {
       if (response.ok) {
         response.json().then(json => {
